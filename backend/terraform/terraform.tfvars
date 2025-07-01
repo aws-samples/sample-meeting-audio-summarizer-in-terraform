@@ -1,0 +1,14 @@
+aws_region                              = "us-east-1"
+aws_profile                             = "YOUR-AWS-PROFILE"
+environment                             = "prod"
+app_name                                = "meeting-audio-summarizer"
+dynamodb_read_capacity                  = 5
+dynamodb_write_capacity                 = 5
+cognito_allowed_email_domains           = ["example.com"]
+model_id                                = "anthropic.claude-3-7-sonnet-20250219-v1:0"
+inference_profile_prefix                = "us"
+frontend_bucket_name                    = "frontend-meeting-audio-summarizer-bucket"
+storage_bucket                          = "backend-meeting-audio-summarizer-bucket"
+cognito_domain_prefix                   = "meeting-summarizer"
+meeting_statistics_table_name           = "MeetingStatistics"
+meeting_summaries_table_name            = "MeetingSummaries"

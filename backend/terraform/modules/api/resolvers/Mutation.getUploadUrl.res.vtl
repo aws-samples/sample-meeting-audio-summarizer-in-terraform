@@ -1,0 +1,9 @@
+#if($context.error)
+    $util.error($context.error.message, $context.error.type)
+#end
+
+#if($context.result.error)
+    $util.error($context.result.error, "Lambda:Unhandled")
+#end
+
+$util.toJson($context.result)

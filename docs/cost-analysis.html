@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Audio Summarizer - Cost Analysis</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #4f46e5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+        .cost-breakdown {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .chart-container {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meeting Audio Summarizer - Cost Analysis</h1>
+    
+    <h2>Monthly Cost Breakdown</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Usage</th>
+                <th>Unit Cost</th>
+                <th>Monthly Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Amazon S3 Storage</td>
+                <td>3GB audio + 12MB transcripts/summaries</td>
+                <td>$0.023 per GB</td>
+                <td>$0.07</td>
+            </tr>
+            <tr>
+                <td>Amazon Transcribe</td>
+                <td>50 hours of audio</td>
+                <td>$1.44 per hour</td>
+                <td>$72.00</td>
+            </tr>
+            <tr>
+                <td>Amazon Bedrock</td>
+                <td>500K input tokens<br>100K output tokens</td>
+                <td>$3.00 per million input tokens<br>$15.00 per million output tokens</td>
+                <td>$3.00</td>
+            </tr>
+            <tr>
+                <td>AWS Lambda</td>
+                <td>300 invocations, 5s avg. runtime, 256MB</td>
+                <td>Various</td>
+                <td>$0.10</td>
+            </tr>
+            <tr>
+                <td>AWS Step Functions</td>
+                <td>1,000 state transitions</td>
+                <td>$0.025 per 1,000</td>
+                <td>$0.03</td>
+            </tr>
+            <tr>
+                <td>Amazon SQS</td>
+                <td>1,000 messages</td>
+                <td>$0.40 per million</td>
+                <td>$0.01</td>
+            </tr>
+            <tr>
+                <td>AWS AppSync</td>
+                <td>5M queries</td>
+                <td>$4.00 per million</td>
+                <td>$20.00</td>
+            </tr>
+            <tr>
+                <td>Amazon Cognito</td>
+                <td>100 Monthly Active Users (MAU)</td>
+                <td>Free tier (first 50K users)</td>
+                <td>$0.00</td>
+            </tr>
+            <tr>
+                <td>Amazon CloudFront</td>
+                <td>5GB data transfer</td>
+                <td>$0.085 per GB</td>
+                <td>$0.43</td>
+            </tr>
+            <tr>
+                <td>Amazon DynamoDB</td>
+                <td>5 RCU/WCU, ~ 1GB storage</td>
+                <td>$0.25 per RCU/WCU + $0.25/GB</td>
+                <td>$2.75</td>
+            </tr>
+            <tr class="total-row">
+                <td colspan="3"><strong>TOTAL</strong></td>
+                <td><strong>$98.39</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="cost-breakdown">
+        <h2>Cost Analysis</h2>
+        <p>
+            The majority of the cost comes from Amazon Transcribe (~73% of total cost at $72.00), with AWS AppSync being the second largest cost component (~20% at $20.00). Despite providing the core AI functionality, Amazon Bedrock costs ~3% of total at $3.00, while DynamoDB, CloudFront, Lambda, Step Functions, SQS, and S3 make up the remaining ~4%.
+        </p>
+        <p>
+            This cost analysis is based on the following assumptions:
+        </p>
+        <ul>
+            <li>50 hours of audio processing per month</li>
+            <li>Average meeting length of 30 minutes</li>
+            <li>100 active users accessing the system</li>
+            <li>5 million API queries per month</li>
+        </ul>
+        <p>
+            Cost optimization opportunities:
+        </p>
+        <ul>
+            <li>Implement audio compression to reduce storage and processing costs</li>
+            <li>Use Amazon Transcribe Medical for medical meetings (if applicable) for higher accuracy</li>
+            <li>Implement caching strategies for frequently accessed summaries to reduce AppSync and DynamoDB costs</li>
+            <li>Consider reserved capacity for DynamoDB if usage patterns are predictable</li>
+        </ul>
+    </div>
+</body>
+</html>

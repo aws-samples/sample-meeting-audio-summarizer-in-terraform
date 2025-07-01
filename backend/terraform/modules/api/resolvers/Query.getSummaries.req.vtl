@@ -1,0 +1,8 @@
+{
+    "version": "2018-05-29",
+    "operation": "Scan",
+    "limit": $util.defaultIfNull($ctx.args.limit, 20),
+    #if( $ctx.args.nextToken )
+        "nextToken": "$ctx.args.nextToken"
+    #end
+}

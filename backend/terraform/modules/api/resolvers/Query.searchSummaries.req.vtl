@@ -1,0 +1,23 @@
+{
+    "version": "2018-05-29",
+    "operation": "Scan",
+    "filter": {
+        "or": [
+            {
+                "contains": {
+                    "title": $util.dynamodb.toDynamoDBJson($ctx.args.query)
+                }
+            },
+            {
+                "contains": {
+                    "context": $util.dynamodb.toDynamoDBJson($ctx.args.query)
+                }
+            },
+            {
+                "contains": {
+                    "keyPoints": $util.dynamodb.toDynamoDBJson($ctx.args.query)
+                }
+            }
+        ]
+    }
+}

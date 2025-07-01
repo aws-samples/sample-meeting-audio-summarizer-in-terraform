@@ -1,0 +1,225 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Meeting {
+  id: ID!
+  title: String!
+  date: String!
+  duration: Int
+  participants: [String]
+  summary: String
+  transcriptUrl: String
+  summaryUrl: String
+  createdAt: String
+  updatedAt: String
+}
+
+type MeetingSummary {
+  meetingId: ID!
+  timestamp: String!
+  title: String
+  summary: String
+  summaryUrl: String
+  transcriptUrl: String
+  participants: [String]
+  duration: Int
+  createdAt: String
+}
+
+type SentimentAnalysis {
+  overall: String!
+  positive: Float!
+  negative: Float!
+  neutral: Float!
+}
+
+type MeetingStatistics @model {
+  meetingId: ID!
+  sentimentAnalysis: SentimentAnalysis
+  duration: Int
+  participantCount: Int
+  language: String
+  stakeholders: [String]
+  context: String
+  title: String
+  meetingType: String
+}
+
+type MeetingSummaries @model {
+  id: ID!
+  title: String
+  date: String
+  stakeholders: [String]
+  context: String
+  objectives: [String]
+  conversationDetails: [String]
+  keyPoints: [String]
+  actionItems: [String]
+  additionalNotes: [String]
+  technicalRequirements: [String]
+  timeline: [String]
+  budget: [String]
+  blockers: [String]
+  agreements: [String]
+  communicationPlan: [String]
+  followUp: [String]
+  questionsAnswers: [String]
+  fileKey: String
+  createdAt: String
+  updatedAt: String
+}
+
+type MeetingSummariesConnection {
+  items: [MeetingSummaries]
+  nextToken: String
+}
+
+type UploadUrlResponse {
+  uploadUrl: String!
+  fileKey: String!
+  fileId: String!
+}
+
+type ProcessSummariesResponse {
+  message: String
+  processedCount: Int
+}
+
+type MonthlyCount {
+  month: String
+  count: Int
+}
+
+type Statistics {
+  totalMeetings: Int
+  totalDuration: String
+  averageDuration: String
+  longestMeeting: String
+  meetingsByMonth: [MonthlyCount]
+  meetingsByDay: AWSJSON
+  meetings: [MeetingStatistics]
+}
+
+type SummaryItem {
+  id: ID!
+  title: String
+  date: String
+  duration: Int
+  summary: String
+  stakeholders: [String]
+  context: String
+  objectives: [String]
+  conversationDetails: [String]
+  keyPoints: [String]
+  actionItems: [String]
+  additionalNotes: [String]
+  technicalRequirements: [String]
+  timeline: [String]
+  budget: [String]
+  blockers: [String]
+  agreements: [String]
+  communicationPlan: [String]
+  followUp: [String]
+  questionsAnswers: [String]
+  fileKey: String
+  createdAt: String
+  updatedAt: String
+}
+
+type SummaryConnection {
+  items: [SummaryItem]
+  nextToken: String
+}
+
+type DeleteSummariesResponse {
+  success: Boolean!
+  message: String
+  deletedIds: [ID!]
+  failedIds: [ID!]
+}
+
+type DeleteSummaryResponse {
+  success: Boolean!
+  message: String
+  deletedId: ID
+}
+
+# Processing Status Types
+type ProcessingStatus {
+  fileId: ID!
+  userId: ID!
+  status: ProcessingStatusEnum!
+  stage: String!
+  progressPercentage: Int!
+  errorMessage: String
+  fileName: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+enum ProcessingStatusEnum {
+  UPLOADED
+  TRANSCRIBING
+  TRANSCRIPTION_COMPLETE
+  SUMMARIZING
+  COMPLETE
+  FAILED
+}
+
+type Query {
+  getMeeting(id: ID!): Meeting
+  listMeetings: [Meeting]
+  getMeetingSummary(meetingId: ID!): MeetingSummary
+  searchMeetingSummaries(searchText: String!): [MeetingSummary]
+  getMeetingStatistics(meetingId: ID!): MeetingStatistics
+    @aws_auth(cognito_groups: ["app_users"])
+
+  # New queries for the frontend
+  getSummaries(limit: Int, nextToken: String): SummaryConnection
+  getSummary(id: ID!): SummaryItem
+  searchSummaries(query: String!): [SummaryItem]
+  getStatistics: Statistics
+
+  # New queries for MeetingSummaries
+  getMeetingSummariesItem(id: ID!): MeetingSummaries
+    @aws_auth(cognito_groups: ["app_users"])
+  listMeetingSummaries(
+    limit: Int
+    nextToken: String
+  ): MeetingSummariesConnection @aws_auth(cognito_groups: ["app_users"])
+  searchMeetingSummariesItems(query: String!): [MeetingSummaries]
+    @aws_auth(cognito_groups: ["app_users"])
+
+  # Processing Status Queries
+  getProcessingStatus(fileId: ID!): ProcessingStatus
+    @aws_auth(cognito_groups: ["app_users"])
+  listUserProcessingStatus: [ProcessingStatus]
+    @aws_auth(cognito_groups: ["app_users"])
+}
+
+type Mutation {
+  createMeeting(title: String!, date: String!, participants: [String]): Meeting
+  updateMeeting(
+    id: ID!
+    title: String
+    date: String
+    participants: [String]
+  ): Meeting
+  deleteMeeting(id: ID!): Boolean
+
+  # New mutation for file uploads
+  getUploadUrl(
+    filename: String!
+    contentType: String!
+    localTimestamp: String
+  ): UploadUrlResponse
+
+  # New mutation to process summaries
+  processSummaries: ProcessSummariesResponse
+
+  # Mutations for deleting summaries
+  deleteSummaries(ids: [ID!]!): DeleteSummariesResponse
+  deleteSummary(id: ID!): DeleteSummaryResponse
+}

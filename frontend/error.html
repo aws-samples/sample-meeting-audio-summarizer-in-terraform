@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Temporarily Unavailable</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .error-container {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0073bb;
+            margin-bottom: 20px;
+        }
+        .message {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .retry-button {
+            background-color: #0073bb;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .retry-button:hover {
+            background-color: #005f9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>Service Temporarily Unavailable</h1>
+        <div class="message">
+            <p>We're sorry, but the Meeting Summary App is currently being deployed or updated.</p>
+            <p>This process typically takes 5-10 minutes to complete. Please try again shortly.</p>
+        </div>
+        <a href="/" class="retry-button">Retry Now</a>
+    </div>
+</body>
+</html>
