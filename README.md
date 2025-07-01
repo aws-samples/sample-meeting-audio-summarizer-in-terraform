@@ -156,7 +156,7 @@ cd sample-meeting-audio-summarizer-in-terraform
 
 ### Step 2: Configure Terraform Variables
 
-Create a `terraform.tfvars` file in the `backend/terraform` directory with the following variables:
+Update `terraform.tfvars` file in the `backend/terraform` directory with the following variables:
 
 ```hcl
 aws_region                              = "us-east-1"
