@@ -1,6 +1,6 @@
 # Meeting Audio Summarizer
 
-This repository contains a serverless application that transcribes, summarizes, and analyzes meeting audio recordings using AWS services. The application leverages Amazon Transcribe for speech-to-text conversion and Amazon Bedrock for AI-powered summarization.
+This repository contains a serverless application that transcribes, summarizes, and analyzes meeting audio recordings using AWS services. The application leverages Amazon Transcribe for speech-to-text conversion and Amazon Bedrock (Claude 3 Sonnet) for AI-powered summarization.
 
 ## Architecture Overview
 
@@ -69,8 +69,8 @@ Before deploying this application, you'll need:
 
 ## Project Structure
 
- ```
-meeting-audio-summarizer/
+```
+sample-meeting-audio-summarizer-in-terraform/
 ├── backend/
 │   ├── functions/                           # Lambda function code
 │   │   ├── audio-processing/                # Audio processing functions
@@ -92,47 +92,49 @@ meeting-audio-summarizer/
 │       │   └── storage/                     # S3 and DynamoDB
 │       ├── main.tf                          # Main Terraform configuration
 │       ├── outputs.tf                       # Output values
-│       └── variables.tf                     # Input variables
-├── docs/                                    # Documentation
-├── frontend/                                # Web application code
+│       ├── variables.tf                     # Input variables
+│       └── terraform.tfvars                 # Variable values
+├── docs/                                    # Documentation and architecture diagrams
+├── frontend/                                # React web application
 │   ├── public/                              # Public assets
-│   │   └── static/                          # Static files
 │   └── src/                                 # React application source
 │       ├── components/                      # React components                                                       
 │       ├── graphql/                         # GraphQL queries and mutations
 │       ├── pages/                           # Page components
 │       └── services/                        # Service integrations
-└── scripts/                                 # Utility scripts
- ```
+└── scripts/                                 # Deployment and utility scripts
+    ├── deploy.sh                            # Main deployment script
+    └── zip-lambdas.sh                       # Lambda packaging script
+```
 
 ## Lambda Functions
 
-The application includes the following Lambda functions:
+The application includes the following Lambda functions organized by category:
 
-1. **Audio Processing**
-   - `UploadFileFunction`: Securely processes audio file uploads, validates formats, and stores in S3
+### Audio Processing
+- **UploadFileFunction**: Securely processes audio file uploads, validates formats, and stores in S3
 
-2. **Authentication**
-   - `CognitoPostConfirmationTrigger`: Adds confirmed users to the guests group after email verification
+### Authentication
+- **CognitoPostConfirmationTrigger**: Adds confirmed users to the app_users group after email verification
 
-3. **Queue Processing**
-   - `ProcessTranscriptionQueueFunction`: Processes messages from SQS queue and triggers the Step Functions workflow directly
+### Queue Processing
+- **ProcessTranscriptionQueueFunction**: Processes messages from SQS queue and triggers the Step Functions workflow
 
-4. **Data Access**
-   - `DeleteSummariesFunction`: Handles batch deletion of meeting summaries from DynamoDB and S3
-   - `ExtractMeetingStatisticsFunction`: Analyzes transcription data to extract meaningful statistics
-   - `GetStatisticsFunction`: Retrieves and aggregates meeting analytics data
-   - `GetSummariesFunction`: Retrieves and paginates multiple meeting summaries
-   - `SearchSummariesFunction`: Performs full-text search across meeting summaries
+### Data Access
+- **DeleteSummariesFunction**: Handles batch deletion of meeting summaries from DynamoDB and S3
+- **ExtractMeetingStatisticsFunction**: Analyzes transcription data to extract meaningful statistics
+- **GetStatisticsFunction**: Retrieves and aggregates meeting analytics data
+- **GetSummariesFunction**: Retrieves and paginates multiple meeting summaries
+- **SearchSummariesFunction**: Performs full-text search across meeting summaries
 
-5. **Summarization**
-   - `StoreSummaryInDatabaseFunction`: Transforms and persists meeting summary data from S3 to DynamoDB (directly triggered by S3 events)
-   - `StoreSummaryInS3Function`: Stores generated summaries in S3
-   - `SummarizeMeetingFunction`: Leverages Amazon Bedrock to generate concise meeting summaries
+### Summarization
+- **StoreSummaryInDatabaseFunction**: Transforms and persists meeting summary data from S3 to DynamoDB (triggered by S3 events)
+- **StoreSummaryInS3Function**: Stores generated summaries in S3
+- **SummarizeMeetingFunction**: Leverages Amazon Bedrock (Claude 3 Sonnet) to generate concise meeting summaries
 
-6. **Transcription**
-   - `GetTranscriptionResultsFunction`: Retrieves and processes completed transcription job results
-   - `ProcessTranscriptionFunction`: Transforms raw transcription data into structured format
+### Transcription
+- **GetTranscriptionResultsFunction**: Retrieves and processes completed transcription job results
+- **ProcessTranscriptionFunction**: Transforms raw transcription data into structured format
 
 ## Authentication Flow
 
@@ -187,33 +189,32 @@ Review the planned changes and type `yes` to proceed with the deployment.
 
 ### Step 4: Deploy Frontend
 
-The frontend deployment script automatically configures the React application with the backend resources created by Terraform.
+The frontend deployment script automatically configures the React application with the backend resources created by Terraform and deploys both backend and frontend:
 
 ```bash
-cd ../../scripts
+cd scripts
 ./deploy.sh
 ```
 
+This script will:
+- Deploy the Terraform infrastructure
+- Build the React frontend with the correct AWS configuration
+- Upload the frontend to S3
+- Invalidate the CloudFront cache
+
 ### Step 5: Access the Application
 
-After successful deployment, you can access the application using the CloudFront domain provided in the Terraform outputs:
+After successful deployment with the `./deploy.sh` script, you'll see output similar to:
 
-```bash
-cd ../backend/terraform
-terraform output cloudfront_distribution_domain
 ```
-
-Or After the entire solutions (both backend and frontend) is deployed by running ```./deploy.sh```, in your terminal you should see something similar to the following text:
-
 Deployment complete! :)
 
-```
 ============================================================================
 Your app is available at: https://<cloudfront_distribution_domain>
 ============================================================================
 ```
 
-Navigate to `https://<cloudfront_distribution_domain>` in your web browser.
+Navigate to the provided CloudFront URL in your web browser.
 
 ## User Guide
 
@@ -251,8 +252,8 @@ Navigate to `https://<cloudfront_distribution_domain>` in your web browser.
 ### Common Issues
 
 1. **Upload Failures**
-   - Ensure audio files are in MP3 format
-   - Check file size (maximum 100MB)
+   - Ensure audio files are in supported formats (MP3, WAV, etc.)
+   - Check file size limits (maximum 100MB)
    - Verify AWS credentials have appropriate permissions
 
 2. **Processing Delays**
@@ -307,7 +308,7 @@ To view logs for troubleshooting:
 
 To use a different Bedrock model:
 
-1. Update the `model_id` variable in `terraform.tfvars`
+1. Update the `model_id` variable in `terraform.tfvars` (currently set to Claude 3 Sonnet)
 2. Modify the prompt template in `SummarizeMeetingFunction.py` if needed
 3. Redeploy the backend infrastructure
 

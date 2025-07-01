@@ -9,11 +9,11 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        h1, h2 {
+        h1, h2, h3 {
             color: #4f46e5;
         }
         table {
@@ -46,14 +46,53 @@
             background-color: #f8f9fa;
             border-radius: 5px;
         }
-        .chart-container {
-            margin-top: 30px;
+        .service-highlight {
+            background-color: #fff3cd;
+        }
+        .major-cost {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+        }
+        .moderate-cost {
+            background-color: #fff3cd;
+            color: #856404;
+            font-weight: bold;
+        }
+        .low-cost {
+            color: #155724;
+            font-weight: bold;
+        }
+        .assumptions {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #4f46e5;
+            margin: 20px 0;
+        }
+        .recommendations {
+            background-color: #f0f9ff;
+            padding: 15px;
+            border-left: 4px solid #0ea5e9;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <h1>Meeting Audio Summarizer - Cost Analysis</h1>
     
+    <div class="assumptions">
+        <h3>Key Assumptions (Based on Enterprise Usage)</h3>
+        <ul>
+            <li><strong>50 hours of audio processing per month</strong> (average 30-minute meetings)</li>
+            <li><strong>100 active users</strong> accessing the system</li>
+            <li><strong>5 million API queries per month</strong> (high-usage enterprise scenario)</li>
+            <li><strong>Claude 3 Sonnet model</strong> for summarization (anthropic.claude-3-7-sonnet-20250219-v1:0)</li>
+            <li><strong>Provisioned DynamoDB capacity</strong> for predictable performance</li>
+            <li><strong>Standard ON DEMAND pricing model</strong></li>
+            <li><strong>US East (N. Virginia) region pricing</strong></li>
+        </ul>
+    </div>
+
     <h2>Monthly Cost Breakdown</h2>
     
     <table>
@@ -63,99 +102,247 @@
                 <th>Usage</th>
                 <th>Unit Cost</th>
                 <th>Monthly Cost</th>
+                <th>% of Total</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Amazon S3 Storage</td>
-                <td>3GB audio + 12MB transcripts/summaries</td>
-                <td>$0.023 per GB</td>
-                <td>$0.07</td>
-            </tr>
-            <tr>
-                <td>Amazon Transcribe</td>
+            <tr class="service-highlight">
+                <td><strong>Amazon Transcribe</strong></td>
                 <td>50 hours of audio</td>
                 <td>$1.44 per hour</td>
-                <td>$72.00</td>
+                <td class="major-cost">$72.00</td>
+                <td>73.2%</td>
             </tr>
             <tr>
-                <td>Amazon Bedrock</td>
-                <td>500K input tokens<br>100K output tokens</td>
-                <td>$3.00 per million input tokens<br>$15.00 per million output tokens</td>
-                <td>$3.00</td>
-            </tr>
-            <tr>
-                <td>AWS Lambda</td>
-                <td>300 invocations, 5s avg. runtime, 256MB</td>
-                <td>Various</td>
-                <td>$0.10</td>
-            </tr>
-            <tr>
-                <td>AWS Step Functions</td>
-                <td>1,000 state transitions</td>
-                <td>$0.025 per 1,000</td>
-                <td>$0.03</td>
-            </tr>
-            <tr>
-                <td>Amazon SQS</td>
-                <td>1,000 messages</td>
-                <td>$0.40 per million</td>
-                <td>$0.01</td>
-            </tr>
-            <tr>
-                <td>AWS AppSync</td>
+                <td><strong>AWS AppSync</strong></td>
                 <td>5M queries</td>
                 <td>$4.00 per million</td>
-                <td>$20.00</td>
+                <td class="moderate-cost">$20.00</td>
+                <td>20.3%</td>
             </tr>
             <tr>
-                <td>Amazon Cognito</td>
-                <td>100 Monthly Active Users (MAU)</td>
-                <td>Free tier (first 50K users)</td>
-                <td>$0.00</td>
+                <td><strong>Amazon Bedrock (Claude 3 Sonnet)</strong></td>
+                <td>500K input tokens<br>100K output tokens</td>
+                <td>$3.00 per million input tokens<br>$15.00 per million output tokens</td>
+                <td class="moderate-cost">$3.00</td>
+                <td>3.0%</td>
             </tr>
             <tr>
-                <td>Amazon CloudFront</td>
+                <td><strong>Amazon DynamoDB</strong></td>
+                <td>5 RCU/WCU, ~1GB storage</td>
+                <td>$0.25 per RCU/WCU + $0.25/GB</td>
+                <td class="low-cost">$2.75</td>
+                <td>2.8%</td>
+            </tr>
+            <tr>
+                <td><strong>Amazon CloudFront</strong></td>
                 <td>5GB data transfer</td>
                 <td>$0.085 per GB</td>
-                <td>$0.43</td>
+                <td class="low-cost">$0.43</td>
+                <td>0.4%</td>
             </tr>
             <tr>
-                <td>Amazon DynamoDB</td>
-                <td>5 RCU/WCU, ~ 1GB storage</td>
-                <td>$0.25 per RCU/WCU + $0.25/GB</td>
-                <td>$2.75</td>
+                <td><strong>AWS Lambda (12 Functions)</strong></td>
+                <td>300 invocations, 5s avg runtime, 256MB</td>
+                <td>$0.20 per 1M requests + compute costs</td>
+                <td class="low-cost">$0.10</td>
+                <td>0.1%</td>
+            </tr>
+            <tr>
+                <td><strong>Amazon S3 Storage</strong></td>
+                <td>3GB audio + 12MB transcripts/summaries</td>
+                <td>$0.023 per GB</td>
+                <td class="low-cost">$0.07</td>
+                <td>0.1%</td>
+            </tr>
+            <tr>
+                <td><strong>AWS Step Functions</strong></td>
+                <td>1,000 state transitions</td>
+                <td>$0.025 per 1,000</td>
+                <td class="low-cost">$0.03</td>
+                <td>0.0%</td>
+            </tr>
+            <tr>
+                <td><strong>Amazon SQS</strong></td>
+                <td>1,000 messages</td>
+                <td>$0.40 per million</td>
+                <td class="low-cost">$0.01</td>
+                <td>0.0%</td>
+            </tr>
+            <tr>
+                <td><strong>Amazon Cognito</strong></td>
+                <td>100 Monthly Active Users (MAU)</td>
+                <td>Free tier (first 50K users)</td>
+                <td class="low-cost">$0.00</td>
+                <td>0.0%</td>
+            </tr>
+            <tr>
+                <td><strong>Amazon CloudWatch</strong></td>
+                <td>Basic monitoring and logging</td>
+                <td>Included with services</td>
+                <td class="low-cost">$0.00</td>
+                <td>0.0%</td>
+            </tr>
+            <tr>
+                <td><strong>AWS IAM</strong></td>
+                <td>Identity and access management</td>
+                <td>No charge</td>
+                <td class="low-cost">$0.00</td>
+                <td>0.0%</td>
             </tr>
             <tr class="total-row">
-                <td colspan="3"><strong>TOTAL</strong></td>
+                <td colspan="3"><strong>TOTAL MONTHLY COST</strong></td>
                 <td><strong>$98.39</strong></td>
+                <td><strong>100%</strong></td>
             </tr>
         </tbody>
     </table>
 
     <div class="cost-breakdown">
-        <h2>Cost Analysis</h2>
+        <h2>Cost Analysis Summary</h2>
         <p>
-            The majority of the cost comes from Amazon Transcribe (~73% of total cost at $72.00), with AWS AppSync being the second largest cost component (~20% at $20.00). Despite providing the core AI functionality, Amazon Bedrock costs ~3% of total at $3.00, while DynamoDB, CloudFront, Lambda, Step Functions, SQS, and S3 make up the remaining ~4%.
+            The majority of the cost comes from <strong>Amazon Transcribe (~73% of total cost at $72.00)</strong>, 
+            with <strong>AWS AppSync being the second largest cost component (~20% at $20.00)</strong>. 
+            Despite providing the core AI functionality, <strong>Amazon Bedrock costs ~3% of total at $3.00</strong>, 
+            while DynamoDB, CloudFront, Lambda, Step Functions, SQS, and S3 make up the remaining ~4%.
         </p>
-        <p>
-            This cost analysis is based on the following assumptions:
-        </p>
+        
+        <h3>Cost Distribution</h3>
         <ul>
-            <li>50 hours of audio processing per month</li>
-            <li>Average meeting length of 30 minutes</li>
-            <li>100 active users accessing the system</li>
-            <li>5 million API queries per month</li>
+            <li><strong>Amazon Transcribe:</strong> $72.00 (73.2%) - Primary cost driver</li>
+            <li><strong>AWS AppSync:</strong> $20.00 (20.3%) - High API query volume</li>
+            <li><strong>Amazon Bedrock:</strong> $3.00 (3.0%) - AI summarization</li>
+            <li><strong>Amazon DynamoDB:</strong> $2.75 (2.8%) - Provisioned capacity</li>
+            <li><strong>Other Services:</strong> $0.67 (0.7%) - Supporting infrastructure</li>
         </ul>
+
+        <h3>Enterprise Usage Considerations</h3>
         <p>
-            Cost optimization opportunities:
+            This cost analysis is based on enterprise-level usage assumptions:
         </p>
         <ul>
-            <li>Implement audio compression to reduce storage and processing costs</li>
-            <li>Use Amazon Transcribe Medical for medical meetings (if applicable) for higher accuracy</li>
-            <li>Implement caching strategies for frequently accessed summaries to reduce AppSync and DynamoDB costs</li>
-            <li>Consider reserved capacity for DynamoDB if usage patterns are predictable</li>
+            <li><strong>High API Volume:</strong> 5 million AppSync queries reflects active enterprise usage</li>
+            <li><strong>Provisioned DynamoDB:</strong> Ensures consistent performance for business-critical applications</li>
+            <li><strong>Realistic Meeting Volume:</strong> 50 hours/month represents ~100 meetings for active teams</li>
+            <li><strong>Multiple Lambda Functions:</strong> 12 functions handle different aspects of the workflow</li>
         </ul>
     </div>
+
+    <div class="recommendations">
+        <h2>Cost Optimization Recommendations</h2>
+        
+        <h3>Immediate Actions</h3>
+        <ul>
+            <li><strong>Audio Compression:</strong> Implement audio compression to reduce storage and processing costs</li>
+            <li><strong>API Query Optimization:</strong> Implement caching strategies for frequently accessed summaries to reduce AppSync and DynamoDB costs</li>
+            <li><strong>Batch Processing:</strong> Consider batch processing for non-real-time transcription to potentially reduce costs</li>
+            <li><strong>Usage Monitoring:</strong> Set up CloudWatch billing alerts and detailed cost monitoring</li>
+        </ul>
+
+        <h3>Scaling Considerations</h3>
+        <ul>
+            <li><strong>Transcribe Tiered Pricing:</strong> Costs decrease with volume (Tier 2: $0.015/min for 250K+ minutes)</li>
+            <li><strong>DynamoDB Reserved Capacity:</strong> Consider reserved capacity for predictable workloads to reduce costs</li>
+            <li><strong>AppSync Caching:</strong> Implement GraphQL query caching to reduce API call volume</li>
+            <li><strong>Bedrock Provisioned Throughput:</strong> Consider for consistent high-volume usage</li>
+        </ul>
+
+        <h3>Long-term Optimization</h3>
+        <ul>
+            <li><strong>Amazon Transcribe Medical:</strong> Use for medical meetings (if applicable) for higher accuracy</li>
+            <li><strong>S3 Lifecycle Policies:</strong> Move older audio files to cheaper storage classes (IA, Glacier)</li>
+            <li><strong>Lambda Optimization:</strong> Monitor and optimize function memory allocation and execution times</li>
+            <li><strong>Compute Savings Plans:</strong> Up to 17% savings on Lambda with 1-3 year commitments</li>
+        </ul>
+    </div>
+
+    <h2>Cost Scaling Projections</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Usage Level</th>
+                <th>Audio Hours/Month</th>
+                <th>API Queries/Month</th>
+                <th>Transcribe Cost</th>
+                <th>AppSync Cost</th>
+                <th>Total Monthly Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Current Enterprise</td>
+                <td>50 hours</td>
+                <td>5M queries</td>
+                <td>$72.00</td>
+                <td>$20.00</td>
+                <td><strong>$98.39</strong></td>
+            </tr>
+            <tr>
+                <td>Small Team</td>
+                <td>20 hours</td>
+                <td>1M queries</td>
+                <td>$28.80</td>
+                <td>$4.00</td>
+                <td><strong>$36.55</strong></td>
+            </tr>
+            <tr>
+                <td>Large Enterprise</td>
+                <td>100 hours</td>
+                <td>10M queries</td>
+                <td>$144.00</td>
+                <td>$40.00</td>
+                <td><strong>$190.14</strong></td>
+            </tr>
+            <tr>
+                <td>Enterprise Scale</td>
+                <td>200 hours</td>
+                <td>20M queries</td>
+                <td>$288.00</td>
+                <td>$80.00</td>
+                <td><strong>$374.64</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Architecture Cost Efficiency</h2>
+    
+    <p>
+        This serverless architecture provides excellent cost efficiency through:
+    </p>
+    <ul>
+        <li><strong>Pay-per-use model:</strong> No idle resource costs for most services</li>
+        <li><strong>Auto-scaling:</strong> Resources scale automatically with demand</li>
+        <li><strong>Managed services:</strong> No infrastructure management overhead</li>
+        <li><strong>Predictable costs:</strong> Provisioned DynamoDB provides cost predictability</li>
+        <li><strong>Enterprise-ready:</strong> High API query capacity supports active user bases</li>
+    </ul>
+
+    <h2>Key Cost Drivers Analysis</h2>
+    
+    <div class="cost-breakdown">
+        <h3>Primary Cost Driver: Amazon Transcribe (73.2%)</h3>
+        <p>At $1.44 per hour, transcription costs dominate the budget. This reflects the compute-intensive nature of speech-to-text processing.</p>
+        
+        <h3>Secondary Cost Driver: AWS AppSync (20.3%)</h3>
+        <p>High API query volume (5M/month) reflects active enterprise usage with frequent summary retrievals, searches, and real-time updates.</p>
+        
+        <h3>AI Processing: Amazon Bedrock (3.0%)</h3>
+        <p>Despite providing sophisticated AI summarization, Bedrock represents excellent value at just 3% of total costs.</p>
+    </div>
+
+    <h2>Exclusions</h2>
+    <p>This cost analysis does not include:</p>
+    <ul>
+        <li>Data transfer costs between AWS regions</li>
+        <li>Development and testing environment costs</li>
+        <li>Custom domain SSL certificate costs</li>
+        <li>Advanced monitoring and alerting costs</li>
+        <li>Backup and disaster recovery costs</li>
+        <li>AWS Support plan costs</li>
+        <li>Email notification costs (Amazon SES) if enabled</li>
+    </ul>
+
+    <p><em>Last updated: January 2025 | Pricing based on US East (N. Virginia) region | Based on enterprise usage assumptions from architectural analysis</em></p>
 </body>
 </html>
