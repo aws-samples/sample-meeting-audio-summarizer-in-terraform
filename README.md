@@ -150,7 +150,7 @@ The application uses Amazon Cognito for authentication with a self-registration 
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/meeting-audio-summarizer.git
+git clone https://github.com/aws-samples/sample-meeting-audio-summarizer-in-terraform.git
 cd meeting-audio-summarizer
 ```
 
