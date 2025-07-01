@@ -151,7 +151,7 @@ The application uses Amazon Cognito for authentication with a self-registration 
 
 ```bash
 git clone https://github.com/aws-samples/sample-meeting-audio-summarizer-in-terraform.git
-cd meeting-audio-summarizer
+cd sample-meeting-audio-summarizer-in-terraform
 ```
 
 ### Step 2: Configure Terraform Variables
