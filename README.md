@@ -64,7 +64,7 @@ Before deploying this application, you'll need:
 3. **Terraform**: Version 1.0.0 or later
 4. **Node.js**: Version 14.x or later
 5. **npm**: Version 6.x or later
-6. **Python**: Version 3.8 or later (for Lambda functions)
+6. **Python**: Version 3.12 or later (for Lambda functions)
 7. **Amazon Bedrock Access**: Ensure you have access to Amazon Bedrock and the required models
 
 ## Project Structure
