@@ -1059,7 +1059,7 @@ const SummaryList = () => {
             </div>
             <div className="ml-3">
               <p className="text-md text-blue-700">
-                 If the <strong>Processing Audio Files</strong> progress bar doesn't appear in the bottom right corner, please refresh the page.
+                 After uploading your file, if the <strong>Processing Audio Files</strong> progress bar doesn't appear in the bottom right corner, please refresh the page.
               </p>
             </div>
             <div className="ml-auto pl-3">
