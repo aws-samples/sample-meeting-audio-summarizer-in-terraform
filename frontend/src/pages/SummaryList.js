@@ -1059,7 +1059,7 @@ const SummaryList = () => {
             </div>
             <div className="ml-3">
               <p className="text-md text-blue-700">
-                To follow the progress of your upload, you can visit the <span><a href="https://console.aws.amazon.com/states?p=pm&c=sm&z=1" target="_blank" rel="noopener noreferrer" className="font-medium underline ml-1">AWS Management Console</a></span> in the N. Virginia region (us-east-1).
+                 If the <strong>Processing Audio Files</strong> progress bar doesn't appear in the bottom right corner, please refresh the page.
               </p>
             </div>
             <div className="ml-auto pl-3">
