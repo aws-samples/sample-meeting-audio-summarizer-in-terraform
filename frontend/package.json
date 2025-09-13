@@ -9,7 +9,7 @@
     "@aws-sdk/lib-storage": "^3.810.0",
     "aws-amplify": "^6.0.15",
     "aws-sdk": "^2.1692.0",
-    "axios": "^1.4.0",
+    "axios": "^1.12.0",
     "chart.js": "^4.4.9",
     "dompurify": "^3.2.6",
     "jspdf": "^3.0.1",
